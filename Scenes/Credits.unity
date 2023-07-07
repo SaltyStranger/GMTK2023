@@ -478,8 +478,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Stuck Pixel Games\n\nMushroomManToad \n> Lead Programmer\n\nPretender8\n>
-    Lead Artist, Project management\n\nKristenStuffs\n> Game Design\n\nKittyK4t\n>
+  m_text: "Stuck Pixel Games\n\nMushroomManToad \n> Programming\n\nPretender8\n>
+    Project Management, Art\n\nKristenStuffs\n> Game Design\n\nMiscEris\n> Art \n\nKittyK4t\n>
     Page Design, Additional support\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 3014ea86fdd31074e8af9d14ab4a193f, type: 2}

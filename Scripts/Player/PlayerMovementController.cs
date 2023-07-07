@@ -179,7 +179,7 @@ public class PlayerMovementController : MonoBehaviour
 
         if (movingUpward(moveVector) > 0.0f)
         {
-            //snapUpward(moveVector);
+            moveVector = snapUpward(moveVector, new Vector2(0.0f, 0.0f));
         }
 
         if (movingRightward(moveVector) > 0.0f)
@@ -299,7 +299,7 @@ public class PlayerMovementController : MonoBehaviour
         // Return the retVec.
         return retVec;
     }
-
+/*
     // Adds the jumping component to the movementVector
     private Vector2 jumpVector()
     {
@@ -326,7 +326,7 @@ public class PlayerMovementController : MonoBehaviour
         }
 
         return new Vector2(0.0f, 0.0f);
-    }
+    }*/
 
     private void physicsContactCheck()
     {
@@ -450,7 +450,6 @@ public class PlayerMovementController : MonoBehaviour
         foreach (Transform tf in feetPos)
         {
             onGround |= RaycastMultilayer(tf.position, Vector2.down, checkDistance, whatIsGround[groundState]);
-            Debug.Log(RaycastMultilayer(tf.position, Vector2.down, checkDistance, whatIsGround[groundState]));
         }
         // A set animator state
         //animator.SetBool("onGround", onGround);
@@ -696,6 +695,37 @@ public class PlayerMovementController : MonoBehaviour
         if (maxGroundPos.y != float.NegativeInfinity)
         {
             moveVector = new Vector2(moveVector.x, -(feetPos[0].position.y - maxGroundPos.y - (checkDistance / 2.0f)));
+        }
+        return moveVector;
+    }
+
+    private Vector2 snapUpward(Vector2 moveVector, Vector2 offset)
+    {
+        // Want to find the highest ground pos so they don't end up snapping down too far at once.
+        // Set to negative infinity to start. Will increase if ground is detecting, ending at the highest ground pos found.
+        Vector2 minGroundPos = new Vector2(float.PositiveInfinity, float.PositiveInfinity);
+        foreach (Transform tf in headPos)
+        {
+            // Find the Ground Pos if in range.
+            float[] groundPosArr = RaycastMultilayerPos(tf.position + new Vector3(offset.x, offset.y, 0.0f), Vector2.up, movingUpward(moveVector), whatIsGround[groundState]);
+
+            // If the ground was found to be in range.
+            if (groundPosArr != null)
+            {
+                // If this is the highest ground found, set maxGroundPos to it.
+                Vector2 groundPos = new Vector2(groundPosArr[0], groundPosArr[1]);
+                if (groundPos.y < minGroundPos.y)
+                {
+                    minGroundPos.y = groundPos.y;
+                }
+            }
+        }
+
+        // If maxGroundPos was updated, ground was found, so snap to it!.
+        if (minGroundPos.y != float.PositiveInfinity)
+        {
+            Debug.Log("Snap!");
+            moveVector = new Vector2(moveVector.x, (minGroundPos.y - headPos[0].position.y - (checkDistance / 2.0f)));
         }
         return moveVector;
     }

@@ -382,6 +382,10 @@ PrefabInstance:
       propertyPath: airSlowdownPercent
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3705348140831126100, guid: a5eb6812e9f9f474ca9f121dcd498ffa, type: 3}
+      propertyPath: dashEnabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

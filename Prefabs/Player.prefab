@@ -429,7 +429,7 @@ Transform:
   - {fileID: 1868360630732928543}
   - {fileID: 1868360630865660492}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!61 &1868360631515626021
 BoxCollider2D:
@@ -522,8 +522,8 @@ MonoBehaviour:
   maxBufferJumpFrames: 5
   gravityValue: 0.019
   maxWalkSpeed: 0.15
-  accelFrames: 5
-  airSlowdownPercent: 0.5
+  accelFrames: 0
+  airSlowdownPercent: 1
   r2: {fileID: 1868360631515626023}
   checkDistance: 0.0001
   whatIsGround:

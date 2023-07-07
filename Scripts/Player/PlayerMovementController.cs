@@ -44,7 +44,7 @@ public class PlayerMovementController : MonoBehaviour
     public Transform[] feetPos, headPos, frontPos, backPos;
 
     // Tracks key inputs
-    bool jumpInput, leftInput, rightInput, pauseCancel;
+    bool jumpInput, leftInput, rightInput, upInput, downInput, pauseCancel;
 
     bool isTransitioning;
 
@@ -99,12 +99,11 @@ public class PlayerMovementController : MonoBehaviour
         controls.MouseKeyboard.right.canceled += _ => { stopRight(); };
 
         // Up Down
-        /*
-        controls.MouseKeyboard.up.started += _ => { upDown = true; };
-        controls.MouseKeyboard.up.canceled += _ => { upUp = true; };
-        controls.MouseKeyboard.down.started += _ => { downDown = true; };
-        controls.MouseKeyboard.down.canceled += _ => { downUp = true; };
-        */
+
+        controls.MouseKeyboard.up.started += _ => { startUp(); };
+        controls.MouseKeyboard.up.canceled += _ => { stopUp(); };
+        controls.MouseKeyboard.down.started += _ => { startDown(); };
+        controls.MouseKeyboard.down.canceled += _ => { stopDown(); };
 
         // Pause
         controls.MouseKeyboard.pause.started += _ => { updatePause(); };
@@ -155,7 +154,7 @@ public class PlayerMovementController : MonoBehaviour
         // Gravity
         // Left and Right inputs
         // Jump
-        Vector2 moveVector = applyGravity() + leftRightMovementLand() + jumpVector();
+        Vector2 moveVector = omniMoveLand();
 
         // Some modules may override this move vector entirely, or modify it. Apply those changes separately. 
         // moveVector = modules.FixedUpdateModuleOverrides(moveVector);
@@ -231,7 +230,7 @@ public class PlayerMovementController : MonoBehaviour
     }
 
     // Controls left-right movement on land. Returns the updates to the x-pos from left and right walking inputs.
-    private Vector2 leftRightMovementLand()
+    private Vector2 omniMoveLand()
     {
         // The Vector to be returned. Begins as 0.
         Vector2 retVec = new Vector2(0.0f, 0.0f);
@@ -269,6 +268,32 @@ public class PlayerMovementController : MonoBehaviour
         else if(Mathf.Abs(oldMoveVector.x) > 0.0f)
         {
             retVec.x = approachValue(0.0f, oldMoveVector.x, accelAmount);
+        }
+
+        // If both inputs are held, decel naturally to 0.
+        if (upInput && downInput)
+        {
+            if (Mathf.Abs(oldMoveVector.y) > 0.0f)
+            {
+                retVec.y = approachValue(0.0f, oldMoveVector.y, accelAmount);
+            }
+        }
+        // Otherwise, if only the left input is held, accelerate to max speed to the left. At max speed, hold constant until told otherwise.
+        else if (upInput)
+        {
+            //setFacing(EnumFacing.LEFT);
+            retVec.y = approachValue(maxWalkSpeed, oldMoveVector.y, accelAmount);
+        }
+        // Or, if the right input is held, accelerate to max speed to the right. At max speed, hold constant until told otherwise.
+        else if (downInput)
+        {
+            //setFacing(EnumFacing.RIGHT);
+            retVec.y = approachValue(-maxWalkSpeed, oldMoveVector.y, accelAmount);
+        }
+        // Finally, if no inputs are held, but there is still x motion from the previous frame, decelerate.
+        else if (Mathf.Abs(oldMoveVector.y) > 0.0f)
+        {
+            retVec.y = approachValue(0.0f, oldMoveVector.y, accelAmount);
         }
 
         // Return the retVec.
@@ -393,6 +418,30 @@ public class PlayerMovementController : MonoBehaviour
     private void stopRight()
     {
         rightInput = false;
+    }
+
+    // Run on up input pressed
+    private void startUp()
+    {
+        upInput = true;
+    }
+
+    // Run on up input released
+    private void stopUp()
+    {
+        upInput = false;
+    }
+
+    // Run on down input pressed
+    private void startDown()
+    {
+        downInput = true;
+    }
+
+    // Run on down input released
+    private void stopDown()
+    {
+        downInput = false;
     }
 
     private bool checkIsGrounded()
